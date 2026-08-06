@@ -1,8 +1,9 @@
 # Libreto — Apache Spark con Python
 ### Palabra por palabra, diapositiva por diapositiva
-link Colab: https://colab.research.google.com/drive/1J0IzHddzBLUP8_L5caS3aymOM_UO-V1P?usp=sharing         
+link Colab: https://colab.research.google.com/drive/1J0IzHddzBLUP8_L5caS3aymOM_UO-V1P?usp=sharing 
+[Link Colab](https://colab.research.google.com/drive/1J0IzHddzBLUP8_L5caS3aymOM_UO-V1P?usp=sharing  "Ir Colab")
 link slides: https://docs.google.com/presentation/d/1iGRXCdUZUa4JGP7-keVzQu7s-q-nxGTe/edit?usp=sharing&ouid=117102797785147973295&rtpof=true&sd=true
-
+[Link Slides](https://docs.google.com/presentation/d/1iGRXCdUZUa4JGP7-keVzQu7s-q-nxGTe/edit?usp=sharing&ouid=117102797785147973295&rtpof=true&sd=true "Ir a Slides")
 > **Cómo leer esto:**
 > Lo que está en **>** es lo que dices, tal cual, en voz alta.
 > Lo que está en *cursiva entre corchetes* son acotaciones: qué hacer, dónde pausar, qué señalar.
