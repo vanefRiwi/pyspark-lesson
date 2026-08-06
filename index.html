@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spark, concepto por concepto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#1C2331;
+  --brasa:#E8622C;
+  --ambar:#F2A65A;
+  --papel:#F7F8FA;
+  --niebla:#E4E7EC;
+  --humo:#5B6472;
+  --display:"Fraunces",Georgia,serif;
+  --cuerpo:"Space Grotesk","Helvetica Neue",Arial,sans-serif;
+  --dato:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--papel);color:var(--tinta);
+  font-family:var(--cuerpo);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.envoltura{max-width:1080px;margin:0 auto;padding:0 28px}
+
+/* ---------- tipografia ---------- */
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;letter-spacing:-.015em}
+h1{font-size:clamp(2.6rem,6.5vw,4.6rem);line-height:1.02;font-weight:700}
+h2{font-size:clamp(1.7rem,3.6vw,2.5rem);line-height:1.1}
+h3{font-size:1.12rem;line-height:1.3}
+p{margin:0 0 1rem}
+.plomo{font-size:1.06rem;color:var(--humo);max-width:62ch}
+.mono{font-family:var(--dato)}
+
+/* el "ojo" de cada modulo dice que hace la persona, no numera */
+.accion{
+  font-family:var(--dato);font-size:.68rem;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--brasa);
+  display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;
+}
+.accion::before{
+  content:"";width:14px;height:14px;flex:0 0 14px;
+  background:var(--brasa);
+  clip-path:polygon(0 0,100% 0,100% 55%,55% 55%,55% 100%,0 100%);
+}
+
+/* ---------- motivo: bloques de particion ---------- */
+.bloques{display:flex;gap:4px;flex-wrap:wrap}
+.bloque{
+  width:15px;height:15px;background:var(--brasa);border-radius:2px;
+  transition:transform .45s cubic-bezier(.2,.9,.3,1),background .3s,opacity .3s;
+}
+.bloque.apagado{background:var(--niebla)}
+
+/* ---------- portada ---------- */
+.portada{
+  background:var(--tinta);color:#fff;padding:clamp(60px,9vw,110px) 0 clamp(50px,7vw,84px);
+  position:relative;overflow:hidden;
+}
+.portada h1{color:#fff}
+.portada .destacar{color:var(--ambar);font-style:italic}
+.portada .plomo{color:#AEB7C4;margin-top:1.6rem;font-size:1.12rem}
+.rejilla-portada{
+  display:grid;grid-template-columns:1fr;gap:44px;align-items:end;
+}
+@media(min-width:900px){.rejilla-portada{grid-template-columns:1.25fr .85fr}}
+.visor-portada{
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:22px;
+}
+.visor-portada .etiqueta{
+  font-family:var(--dato);font-size:.66rem;letter-spacing:.16em;
+  text-transform:uppercase;color:#8A94A3;margin-bottom:14px;
+}
+.pista{margin-bottom:16px}
+.pista:last-child{margin-bottom:0}
+.pista .nombre{
+  font-family:var(--dato);font-size:.72rem;color:#AEB7C4;margin-bottom:6px;
+  display:flex;justify-content:space-between;
+}
+.pista .barra{height:10px;background:rgba(255,255,255,.09);border-radius:5px;overflow:hidden}
+.pista .relleno{height:100%;width:0;border-radius:5px;background:var(--brasa);transition:width .1s linear}
+.pista.uno .relleno{background:#8A94A3}
+
+/* ---------- modulos ---------- */
+.modulo{padding:clamp(56px,7vw,86px) 0;border-top:1px solid var(--niebla)}
+.modulo:first-of-type{border-top:none}
+.cabecera-modulo{max-width:66ch;margin-bottom:34px}
+.cabecera-modulo h2{margin-bottom:.7rem}
+
+.taller{
+  background:#fff;border:1px solid var(--niebla);border-radius:16px;
+  padding:clamp(20px,3vw,30px);
+}
+.taller.oscuro{background:var(--tinta);border-color:var(--tinta);color:#fff}
+.taller.oscuro h3{color:#fff}
+.taller.oscuro .apunte{color:#AEB7C4}
+.apunte{font-size:.9rem;color:var(--humo);margin:0}
+
+.controles{
+  display:flex;flex-wrap:wrap;gap:18px 26px;align-items:center;
+  padding-bottom:20px;margin-bottom:22px;border-bottom:1px solid var(--niebla);
+}
+.taller.oscuro .controles{border-bottom-color:rgba(255,255,255,.12)}
+.control{display:flex;flex-direction:column;gap:6px;min-width:200px;flex:1}
+.control label{
+  font-family:var(--dato);font-size:.68rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--humo);
+}
+.taller.oscuro .control label{color:#8A94A3}
+.control .valor{font-family:var(--dato);font-weight:700;color:var(--brasa)}
+
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;
+  background:var(--niebla);outline:none;margin:8px 0;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--brasa);cursor:pointer;border:3px solid #fff;
+  box-shadow:0 1px 4px rgba(28,35,49,.3);
+}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;background:var(--brasa);
+  cursor:pointer;border:3px solid #fff;
+}
+input[type=range]:focus-visible{outline:2px solid var(--tinta);outline-offset:4px}
+
+.btn{
+  font-family:var(--cuerpo);font-size:.86rem;font-weight:700;
+  padding:11px 20px;border-radius:8px;border:1px solid var(--tinta);
+  background:var(--tinta);color:#fff;cursor:pointer;transition:.16s;
+}
+.btn:hover{background:#2A3446}
+.btn:focus-visible{outline:2px solid var(--brasa);outline-offset:3px}
+.btn.brasa{background:var(--brasa);border-color:var(--brasa)}
+.btn.brasa:hover{background:#CF5323}
+.btn.fantasma{background:transparent;color:var(--tinta)}
+.btn.fantasma:hover{background:var(--niebla)}
+.taller.oscuro .btn.fantasma{color:#fff;border-color:rgba(255,255,255,.35)}
+.taller.oscuro .btn.fantasma:hover{background:rgba(255,255,255,.1)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+
+/* ---------- 1. el techo ---------- */
+.memoria{display:grid;grid-template-columns:1fr;gap:22px}
+@media(min-width:760px){.memoria{grid-template-columns:1fr 1fr}}
+.tarro{border:1px solid var(--niebla);border-radius:12px;padding:18px;background:var(--papel)}
+.tarro h3{margin-bottom:4px}
+.tarro .subtitulo{font-size:.82rem;color:var(--humo);margin-bottom:14px}
+.deposito{
+  position:relative;height:190px;border-radius:10px;overflow:hidden;
+  background:repeating-linear-gradient(0deg,#fff,#fff 18px,#EEF0F3 18px,#EEF0F3 19px);
+  border:1px solid var(--niebla);
+}
+.nivel{
+  position:absolute;left:0;right:0;bottom:0;height:0;
+  background:var(--tinta);transition:height .35s ease, background .35s ease;
+}
+.nivel.desborde{background:var(--brasa)}
+.tope{
+  position:absolute;left:0;right:0;bottom:70%;height:2px;background:var(--brasa);
+}
+.tope span{
+  position:absolute;right:6px;top:-19px;font-family:var(--dato);
+  font-size:.62rem;color:var(--brasa);letter-spacing:.08em;
+}
+.veredicto{
+  margin-top:12px;font-family:var(--dato);font-size:.8rem;font-weight:700;
+  min-height:2.6em;
+}
+.veredicto.ok{color:#2F7D52}
+.veredicto.mal{color:var(--brasa)}
+.repartidor{display:flex;gap:8px;height:190px;align-items:flex-end}
+.columna-ex{
+  flex:1;background:var(--papel);border:1px solid var(--niebla);border-radius:8px;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:6px;gap:3px;
+  min-height:100%;
+}
+.trozo{height:9px;background:var(--brasa);border-radius:2px;opacity:.9}
+
+/* ---------- 2. particiones ---------- */
+.pista-trabajo{display:grid;gap:14px}
+.ejecutor{
+  display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center;
+}
+.ejecutor .rotulo{
+  font-family:var(--dato);font-size:.72rem;color:var(--humo);text-align:right;
+}
+.taller.oscuro .ejecutor .rotulo{color:#8A94A3}
+.carril{
+  height:26px;background:var(--papel);border:1px solid var(--niebla);
+  border-radius:6px;display:flex;gap:3px;padding:3px;overflow:hidden;
+}
+.taller.oscuro .carril{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+.tarea{
+  flex:1 1 0;min-width:6px;background:var(--niebla);border-radius:2px;
+  transition:background .2s;
+}
+.taller.oscuro .tarea{background:rgba(255,255,255,.18)}
+.tarea.hecha,.taller.oscuro .tarea.hecha{background:var(--brasa)}
+.tarea.activa,.taller.oscuro .tarea.activa{background:var(--ambar)}
+.marcador{
+  display:flex;gap:28px;flex-wrap:wrap;margin-top:22px;padding-top:18px;
+  border-top:1px solid rgba(255,255,255,.12);
+}
+.marcador .celda .k{
+  font-family:var(--dato);font-size:.64rem;letter-spacing:.14em;
+  text-transform:uppercase;color:#8A94A3;
+}
+.marcador .celda .v{
+  font-family:var(--display);font-size:1.9rem;font-weight:700;color:var(--ambar);
+}
+
+/* ---------- 3. driver ---------- */
+.organigrama{display:grid;gap:0;justify-items:center;padding:6px 0}
+.caja-driver{
+  background:var(--tinta);color:#fff;border-radius:12px;padding:14px 26px;text-align:center;
+}
+.caja-driver .rol{
+  font-family:var(--dato);font-size:.64rem;letter-spacing:.16em;color:var(--ambar);
+}
+.caja-driver .qué{font-size:.85rem;color:#C6CDD8;margin-top:2px}
+.cableado{width:100%;height:46px;position:relative}
+.cableado i{position:absolute;background:var(--brasa);display:block}
+.fila-ex{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%}
+.caja-ex{
+  border:1px solid var(--niebla);border-radius:10px;padding:12px;text-align:center;
+  background:var(--papel);
+}
+.caja-ex .rol{font-family:var(--dato);font-size:.66rem;color:var(--humo);letter-spacing:.1em}
+.caja-ex .bloques{justify-content:center;margin-top:8px}
+
+/* ---------- 4. pereza ---------- */
+.cadena{display:grid;gap:22px;grid-template-columns:1fr}
+@media(min-width:860px){.cadena{grid-template-columns:1.05fr .95fr}}
+.paleta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.ficha{
+  font-family:var(--dato);font-size:.78rem;padding:8px 12px;border-radius:7px;
+  border:1px solid var(--niebla);background:#fff;cursor:pointer;transition:.15s;
+}
+.ficha:hover{border-color:var(--tinta)}
+.ficha:focus-visible{outline:2px solid var(--brasa);outline-offset:2px}
+.ficha.es-accion{border-color:var(--brasa);color:var(--brasa);font-weight:700}
+.ficha.es-accion:hover{background:var(--brasa);color:#fff}
+.consola{
+  background:var(--tinta);border-radius:12px;padding:18px;min-height:230px;
+  font-family:var(--dato);font-size:.8rem;color:#E6EAF0;
+}
+.consola .linea{margin-bottom:5px;color:var(--ambar)}
+.consola .linea.gris{color:#8A94A3}
+.consola .vacio{color:#5B6472;font-style:italic}
+.contadores{
+  display:flex;gap:26px;flex-wrap:wrap;margin-top:16px;padding-top:14px;
+  border-top:1px solid rgba(255,255,255,.12);
+}
+.contadores .k{font-family:var(--dato);font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:#8A94A3}
+.contadores .v{font-family:var(--display);font-size:1.6rem;font-weight:700;color:#fff}
+.contadores .v.vivo{color:var(--brasa)}
+.aviso{
+  margin-top:14px;padding:12px 14px;border-radius:9px;background:#FDF0E8;
+  font-size:.88rem;color:var(--tinta);border-left:3px solid var(--brasa);
+}
+
+/* ---------- 5. catalyst ---------- */
+.columnas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.col-chip{
+  font-family:var(--dato);font-size:.76rem;padding:8px 13px;border-radius:7px;
+  border:1px solid var(--niebla);background:var(--papel);color:var(--humo);
+  cursor:pointer;transition:.15s;
+}
+.col-chip:hover{border-color:var(--tinta)}
+.col-chip:focus-visible{outline:2px solid var(--brasa);outline-offset:2px}
+.col-chip.pedida{background:var(--brasa);border-color:var(--brasa);color:#fff;font-weight:700}
+.disco{
+  display:grid;grid-template-columns:repeat(8,1fr);gap:5px;
+  border:1px solid var(--niebla);border-radius:10px;padding:10px;background:var(--papel);
+}
+.tira{display:grid;gap:3px}
+.tira .celdita{height:11px;background:var(--niebla);border-radius:2px;transition:background .25s}
+.tira.leida .celdita{background:var(--brasa)}
+.tira .cab{
+  font-family:var(--dato);font-size:.58rem;color:var(--humo);
+  text-align:center;margin-bottom:3px;height:1.2em;overflow:hidden;
+}
+.tira.leida .cab{color:var(--brasa);font-weight:700}
+
+/* ---------- 6. shuffle ---------- */
+.arena{
+  position:relative;height:240px;border-radius:12px;background:var(--papel);
+  border:1px solid var(--niebla);overflow:hidden;
+}
+.muelle{
+  position:absolute;bottom:16px;width:26%;border-radius:8px;
+  background:#fff;border:1px solid var(--niebla);padding:8px;text-align:center;
+}
+.muelle .rot{font-family:var(--dato);font-size:.62rem;color:var(--humo)}
+.punto{
+  position:absolute;width:11px;height:11px;border-radius:3px;
+  transition:left .85s cubic-bezier(.4,0,.2,1),top .85s cubic-bezier(.4,0,.2,1);
+}
+
+/* ---------- 7. comparador ---------- */
+.balanza{display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--niebla);border-radius:14px;overflow:hidden}
+@media(min-width:800px){.balanza{grid-template-columns:1fr 1fr}}
+.lado{padding:22px}
+.lado.pandas{background:#fff}
+.lado.spark{background:var(--tinta);color:#fff}
+.lado .quien{
+  font-family:var(--dato);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;
+  margin-bottom:6px;color:var(--humo);
+}
+.lado.spark .quien{color:var(--ambar)}
+.lado .frase{font-family:var(--display);font-size:1.32rem;font-weight:600;line-height:1.25;min-height:3.2em}
+.lado .detalle{font-size:.92rem;color:var(--humo);margin-top:10px;min-height:4.4em}
+.lado.spark .detalle{color:#AEB7C4}
+.temas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.tema{
+  font-size:.83rem;font-weight:500;padding:8px 14px;border-radius:20px;
+  border:1px solid var(--niebla);background:#fff;cursor:pointer;transition:.15s;
+}
+.tema:hover{border-color:var(--tinta)}
+.tema:focus-visible{outline:2px solid var(--brasa);outline-offset:2px}
+.tema[aria-pressed=true]{background:var(--tinta);color:#fff;border-color:var(--tinta)}
+
+/* ---------- glosario ---------- */
+.fichero{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
+.tarjeta{
+  background:#fff;border:1px solid var(--niebla);border-radius:11px;padding:15px;
+  cursor:pointer;transition:.18s;text-align:left;font:inherit;color:inherit;
+}
+.tarjeta:hover{border-color:var(--brasa);transform:translateY(-2px)}
+.tarjeta:focus-visible{outline:2px solid var(--brasa);outline-offset:2px}
+.tarjeta .palabra{font-family:var(--dato);font-size:.86rem;font-weight:700}
+.tarjeta .significado{
+  font-size:.85rem;color:var(--humo);margin-top:7px;
+  max-height:0;overflow:hidden;transition:max-height .3s ease;
+}
+.tarjeta[aria-expanded=true]{background:var(--tinta);border-color:var(--tinta)}
+.tarjeta[aria-expanded=true] .palabra{color:var(--ambar)}
+.tarjeta[aria-expanded=true] .significado{max-height:200px;color:#C6CDD8}
+
+/* ---------- pie ---------- */
+.pie{background:var(--tinta);color:#8A94A3;padding:40px 0;font-size:.85rem}
+.pie strong{color:#fff;font-weight:500}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PORTADA ============ -->
+<header class="portada">
+  <div class="envoltura rejilla-portada">
+    <div>
+      <div class="accion" style="color:var(--ambar)">Material interactivo</div>
+      <h1>Cuando los datos<br>ya no caben en<br><span class="destacar">una</span> máquina.</h1>
+      <h1>Dividir el trabajo<br>entre <span class="destacar">muchos</span>.</h1>
+      <p class="plomo">Seis conceptos que explican toda la herramienta. Mueve los controles: cada uno hace lo que dice, con números que cambian de verdad.</p>
+    </div>
+    <div class="visor-portada" aria-hidden="true">
+      <div class="etiqueta">El mismo trabajo, dos formas</div>
+      <div class="pista uno">
+        <div class="nombre"><span>1 trabajador</span><span id="relojUno">0.0 s</span></div>
+        <div class="barra"><div class="relleno" id="barraUno"></div></div>
+      </div>
+      <div class="pista">
+        <div class="nombre"><span>6 trabajadores</span><span id="relojSeis">0.0 s</span></div>
+        <div class="barra"><div class="relleno" id="barraSeis"></div></div>
+      </div>
+      <div class="bloques" id="motivoPortada" style="margin-top:20px"></div>
+    </div>
+  </div>
+</header>
+
+<main class="envoltura">
+
+  <!-- ============ 1. EL TECHO ============ -->
+  <section class="modulo">
+    <div class="cabecera-modulo">
+      <div class="accion">Arrastra el tamaño</div>
+      <h2>El límite de pandas es físico</h2>
+      <p class="plomo">pandas carga el archivo entero en la memoria de un solo computador. Cuando el archivo pesa más que la memoria, no hay optimización que valga: el proceso se cae. Spark no tiene ese techo porque nunca intenta cargarlo todo junto.</p>
+    </div>
+
+    <div class="taller">
+      <div class="controles">
+        <div class="control">
+          <label for="ctlTam">Tamaño del archivo · <span class="valor" id="valTam">2 GB</span></label>
+          <input type="range" id="ctlTam" min="0" max="40" value="8" step="1" aria-describedby="valTam">
+        </div>
+        <div class="control" style="flex:0 0 auto;min-width:auto">
+          <label for="ctlRam">RAM del equipo · <span class="valor" id="valRam">16 GB</span></label>
+          <input type="range" id="ctlRam" min="4" max="64" value="16" step="4">
+        </div>
+      </div>
+
+      <div class="memoria">
+        <div class="tarro">
+          <h3>pandas</h3>
+          <div class="subtitulo">Una máquina, una memoria</div>
+          <div class="deposito">
+            <div class="tope"><span>LÍMITE DE RAM</span></div>
+            <div class="nivel" id="nivelPandas"></div>
+          </div>
+          <div class="veredicto" id="veredicto"></div>
+        </div>
+        <div class="tarro">
+          <h3>Spark</h3>
+          <div class="subtitulo">El archivo se corta y se reparte</div>
+          <div class="repartidor" id="repartidor"></div>
+          <div class="veredicto ok" id="veredictoSpark"></div>
+        </div>
+      </div>
+      <p class="apunte" style="margin-top:16px">El listón naranja es la memoria disponible. Súbele al archivo y mira cuál de los dos se desborda.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. PARTICIONES ============ -->
+  <section class="modulo">
+    <div class="cabecera-modulo">
+      <div class="accion">Elige cuántos trabajadores</div>
+      <h2>Particiones: el archivo se corta en pedazos</h2>
+      <p class="plomo">Spark parte el archivo en trozos llamados <strong>particiones</strong>. Cada trabajador procesa las suyas al mismo tiempo que los demás. Una partición equivale a una tarea, y ahí está todo el paralelismo.</p>
+    </div>
+
+    <div class="taller oscuro">
+      <div class="controles">
+        <div class="control">
+          <label for="ctlEx">Executors · <span class="valor" id="valEx">3</span></label>
+          <input type="range" id="ctlEx" min="1" max="8" value="3" step="1">
+        </div>
+        <div class="control">
+          <label for="ctlPart">Particiones · <span class="valor" id="valPart">12</span></label>
+          <input type="range" id="ctlPart" min="4" max="32" value="12" step="4">
+        </div>
+        <button class="btn brasa" id="btnCorrer">Ejecutar el trabajo</button>
+      </div>
+
+      <div class="pista-trabajo" id="pistaTrabajo"></div>
+
+      <div class="marcador">
+        <div class="celda"><div class="k">Tareas por executor</div><div class="v" id="mTareas">4</div></div>
+        <div class="celda"><div class="k">Tiempo simulado</div><div class="v" id="mTiempo">—</div></div>
+        <div class="celda"><div class="k">Frente a 1 executor</div><div class="v" id="mGanancia">—</div></div>
+      </div>
+      <p class="apunte" style="margin-top:16px">Sube los executors y vuelve a ejecutar. Fíjate en algo: si pones más executors que particiones, algunos se quedan sin nada que hacer y el tiempo deja de bajar.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. DRIVER ============ -->
+  <section class="modulo">
+    <div class="cabecera-modulo">
+      <div class="accion">Reparte las tareas</div>
+      <h2>Quién manda y quién trabaja</h2>
+      <p class="plomo">El <strong>driver</strong> es tu script de Python: arma el plan y reparte, pero no toca los datos. Los <strong>executors</strong> son los que sí procesan. Confundirlos es el error más común al empezar.</p>
+    </div>
+
+    <div class="taller">
+      <div class="organigrama">
+        <div class="caja-driver">
+          <div class="rol">DRIVER</div>
+          <div style="font-weight:700">Tu script de Python</div>
+          <div class="qué">Arma el plan · reparte tareas · no procesa datos</div>
+        </div>
+        <div class="cableado" id="cableado"></div>
+        <div class="fila-ex" id="filaEx"></div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;align-items:center">
+        <button class="btn fantasma" id="btnRepartir">Enviar las tareas</button>
+        <p class="apunte" id="notaDriver" style="margin:0">El driver está esperando. Nada se ha repartido todavía.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. PEREZA ============ -->
+  <section class="modulo">
+    <div class="cabecera-modulo">
+      <div class="accion">Arma una cadena</div>
+      <h2>Spark no ejecuta hasta que se lo exiges</h2>
+      <p class="plomo">Las <strong>transformaciones</strong> no procesan nada: solo van anotando pasos en un plan. Solo una <strong>acción</strong> dispara la ejecución de toda la cadena acumulada. Encadena varias y mira el contador de filas leídas.</p>
+    </div>
+
+    <div class="taller">
+      <div class="cadena">
+        <div>
+          <h3 style="margin-bottom:10px">Transformaciones</h3>
+          <p class="apunte" style="margin-bottom:12px">Solo anotan. Añade las que quieras.</p>
+          <div class="paleta" id="paletaTrans"></div>
+
+          <h3 style="margin-bottom:10px">Acciones</h3>
+          <p class="apunte" style="margin-bottom:12px">Estas sí ejecutan todo lo anotado.</p>
+          <div class="paleta" id="paletaAcc"></div>
+
+          <button class="btn fantasma" id="btnLimpiar">Empezar de cero</button>
+        </div>
+
+        <div>
+          <div class="consola" id="consola"></div>
+          <div class="aviso" id="avisoPereza">Ve añadiendo transformaciones. Vas a ver que el contador de filas leídas no se mueve.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. CATALYST ============ -->
+  <section class="modulo">
+    <div class="cabecera-modulo">
+      <div class="accion">Pide unas columnas</div>
+      <h2>Por qué esperar sale a cuenta</h2>
+      <p class="plomo">Como Spark ve el plan completo antes de ejecutar, su optimizador —llamado <strong>Catalyst</strong>— puede saltarse trabajo. Si al final solo pides tres columnas, nunca lee las demás del disco. Nadie se lo pidió: lo dedujo solo.</p>
+    </div>
+
+    <div class="taller">
+      <p class="apunte" style="margin-bottom:12px">Marca las columnas que tu consulta necesita:</p>
+      <div class="columnas" id="columnas"></div>
+
+      <p class="apunte" style="margin-bottom:10px">Lo que Spark lee del disco:</p>
+      <div class="disco" id="disco"></div>
+
+      <div class="aviso" id="avisoCatalyst" style="margin-top:16px"></div>
+    </div>
+  </section>
+
+  <!-- ============ 6. SHUFFLE ============ -->
+  <section class="modulo">
+    <div class="cabecera-modulo">
+      <div class="accion">Compara las dos operaciones</div>
+      <h2>El shuffle es lo que cuesta caro</h2>
+      <p class="plomo">Un <code class="mono">filter</code> lo resuelve cada trabajador con lo que ya tiene en las manos. Un <code class="mono">groupBy</code> obliga a mover datos entre trabajadores para juntar los que van al mismo grupo, y eso viaja por la red. Es la causa número uno de que un proceso se demore.</p>
+    </div>
+
+    <div class="taller">
+      <div class="controles">
+        <button class="btn fantasma" id="btnFiltrar">Ejecutar un filter</button>
+        <button class="btn brasa" id="btnAgrupar">Ejecutar un groupBy</button>
+      </div>
+      <div class="arena" id="arena"></div>
+      <div class="aviso" id="avisoShuffle" style="margin-top:16px">Cada cuadro de color es un dato. Los colores representan el grupo al que pertenece cada uno.</div>
+    </div>
+  </section>
+
+  <!-- ============ 7. COMPARADOR ============ -->
+  <section class="modulo">
+    <div class="cabecera-modulo">
+      <div class="accion">Escoge un criterio</div>
+      <h2>pandas y Spark, frente a frente</h2>
+      <p class="plomo">No compiten: se reparten el trabajo. pandas para explorar, Spark para producir. Estos son los puntos donde de verdad se separan.</p>
+    </div>
+
+    <div class="taller" style="border:none;padding:0;background:transparent">
+      <div class="temas" id="temas"></div>
+      <div class="balanza">
+        <div class="lado pandas">
+          <div class="quien">pandas</div>
+          <div class="frase" id="frasePandas"></div>
+          <div class="detalle" id="detallePandas"></div>
+        </div>
+        <div class="lado spark">
+          <div class="quien">Spark</div>
+          <div class="frase" id="fraseSpark"></div>
+          <div class="detalle" id="detalleSpark"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GLOSARIO ============ -->
+  <section class="modulo">
+    <div class="cabecera-modulo">
+      <div class="accion">Toca para ver la definición</div>
+      <h2>Las palabras que van a salir</h2>
+      <p class="plomo">Doce términos que aparecen en cualquier conversación sobre Spark, en una línea cada uno.</p>
+    </div>
+    <div class="fichero" id="fichero"></div>
+  </section>
+
+</main>
+
+<footer class="pie">
+  <div class="envoltura">
+    <strong>Spark, concepto por concepto</strong> · material de apoyo para la clase de analítica de datos.
+    Los tiempos y volúmenes son simulaciones para ilustrar el comportamiento, no mediciones reales.
+  </div>
+</footer>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const suave = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ============ PORTADA: dos relojes ============ */
+(function(){
+  const bu = $("#barraUno"), bs = $("#barraSeis");
+  const ru = $("#relojUno"), rs = $("#relojSeis");
+  const motivo = $("#motivoPortada");
+  for(let i=0;i<36;i++){
+    const b = document.createElement("span");
+    b.className = "bloque apagado";
+    motivo.appendChild(b);
+  }
+  const cuadros = [...motivo.children];
+  const DUR = 6000;
+  let t0 = null;
+  function paso(t){
+    if(!t0) t0 = t;
+    let p = ((t - t0) % DUR) / DUR;
+    const pu = Math.min(1, p * 1);
+    const ps = Math.min(1, p * 6);
+    bu.style.width = (pu*100)+"%";
+    bs.style.width = (ps*100)+"%";
+    ru.textContent = Math.min(p*6, 6).toFixed(1)+" s";
+    rs.textContent = Math.min(p*6, 1).toFixed(1)+" s";
+    const n = Math.round(ps * cuadros.length);
+    cuadros.forEach((c,i)=> c.classList.toggle("apagado", i >= n));
+    requestAnimationFrame(paso);
+  }
+  if(suave) requestAnimationFrame(paso);
+  else { bu.style.width="100%"; bs.style.width="100%"; ru.textContent="6.0 s"; rs.textContent="1.0 s";
+         cuadros.forEach(c=>c.classList.remove("apagado")); }
+})();
+
+/* ============ 1. EL TECHO ============ */
+(function(){
+  const ctlTam = $("#ctlTam"), ctlRam = $("#ctlRam");
+  const nivel = $("#nivelPandas"), rep = $("#repartidor");
+  const vTam = $("#valTam"), vRam = $("#valRam");
+  const ver = $("#veredicto"), verS = $("#veredictoSpark");
+
+  function tam(v){ // escala no lineal: 0.25 GB -> 1 TB
+    const pasos = [0.25,0.5,1,2,4,6,8,12,16,24,32,48,64,96,128,192,256,384,512,768,1024];
+    return pasos[Math.min(pasos.length-1, Math.round(v/2))];
+  }
+  function fmt(g){ return g >= 1024 ? (g/1024)+" TB" : g+" GB"; }
+
+  function pintar(){
+    const g = tam(+ctlTam.value), ram = +ctlRam.value;
+    vTam.textContent = fmt(g);
+    vRam.textContent = ram+" GB";
+
+    // el 70% del deposito es el limite de RAM
+    const alturaPct = Math.min(100, (g/ram) * 70);
+    nivel.style.height = alturaPct + "%";
+    const cabe = g <= ram * 0.85;
+    nivel.classList.toggle("desborde", !cabe);
+    ver.className = "veredicto " + (cabe ? "ok" : "mal");
+    ver.textContent = cabe
+      ? "Cabe en memoria. Funciona sin problema."
+      : "No cabe: MemoryError. El proceso se cae.";
+
+    // Spark: reparte en 4 columnas, cada trozo es un pedazo del archivo
+    const trozos = Math.max(4, Math.min(40, Math.round(Math.log2(g/0.25)*3)+4));
+    rep.innerHTML = "";
+    const cols = 4;
+    const porCol = Math.ceil(trozos/cols);
+    for(let c=0;c<cols;c++){
+      const col = document.createElement("div");
+      col.className = "columna-ex";
+      for(let i=0;i<porCol;i++){
+        const t = document.createElement("span");
+        t.className = "trozo";
+        col.appendChild(t);
+      }
+      rep.appendChild(col);
+    }
+    verS.textContent = "Se procesa en " + trozos + " particiones. Ninguna necesita caber entera en una máquina.";
+  }
+  ctlTam.addEventListener("input", pintar);
+  ctlRam.addEventListener("input", pintar);
+  pintar();
+})();
+
+/* ============ 2. PARTICIONES ============ */
+(function(){
+  const ctlEx = $("#ctlEx"), ctlPart = $("#ctlPart");
+  const pista = $("#pistaTrabajo");
+  const vEx = $("#valEx"), vPart = $("#valPart");
+  const mT = $("#mTareas"), mTi = $("#mTiempo"), mG = $("#mGanancia");
+  const btn = $("#btnCorrer");
+  let corriendo = false;
+
+  function construir(){
+    const ex = +ctlEx.value, part = +ctlPart.value;
+    vEx.textContent = ex; vPart.textContent = part;
+    pista.innerHTML = "";
+    const reparto = new Array(ex).fill(0);
+    for(let i=0;i<part;i++) reparto[i % ex]++;
+    reparto.forEach((n,i)=>{
+      const fila = document.createElement("div");
+      fila.className = "ejecutor";
+      fila.innerHTML = '<div class="rotulo">executor '+(i+1)+'</div>';
+      const carril = document.createElement("div");
+      carril.className = "carril";
+      for(let k=0;k<n;k++){
+        const t = document.createElement("span");
+        t.className = "tarea";
+        carril.appendChild(t);
+      }
+      if(n === 0){
+        const vacio = document.createElement("span");
+        vacio.style.cssText = "font-family:var(--dato);font-size:.66rem;color:#8A94A3;align-self:center;padding-left:6px";
+        vacio.textContent = "sin tareas";
+        carril.appendChild(vacio);
+      }
+      fila.appendChild(carril);
+      pista.appendChild(fila);
+    });
+    mT.textContent = Math.max(...reparto);
+    mTi.textContent = "—"; mG.textContent = "—";
+  }
+
+  function correr(){
+    if(corriendo) return;
+    corriendo = true; btn.disabled = true;
+    const carriles = [...pista.querySelectorAll(".carril")];
+    carriles.forEach(c => c.querySelectorAll(".tarea").forEach(t => t.className = "tarea"));
+    const maxTareas = Math.max(...carriles.map(c => c.querySelectorAll(".tarea").length));
+    const paso = suave ? 170 : 0;
+    let ronda = 0;
+
+    function tick(){
+      carriles.forEach(c=>{
+        const ts = c.querySelectorAll(".tarea");
+        if(ts[ronda-1]) ts[ronda-1].className = "tarea hecha";
+        if(ts[ronda]) ts[ronda].className = "tarea activa";
+      });
+      ronda++;
+      if(ronda <= maxTareas){ setTimeout(tick, paso); }
+      else {
+        carriles.forEach(c => c.querySelectorAll(".tarea").forEach(t => t.className = "tarea hecha"));
+        const seg = maxTareas * 0.4;
+        const solo = (+ctlPart.value) * 0.4;
+        mTi.textContent = seg.toFixed(1)+" s";
+        mG.textContent = (solo/seg).toFixed(1)+"×";
+        corriendo = false; btn.disabled = false;
+      }
+    }
+    tick();
+  }
+
+  ctlEx.addEventListener("input", construir);
+  ctlPart.addEventListener("input", construir);
+  btn.addEventListener("click", correr);
+  construir();
+})();
+
+/* ============ 3. DRIVER ============ */
+(function(){
+  const fila = $("#filaEx"), cable = $("#cableado"), nota = $("#notaDriver");
+  const btn = $("#btnRepartir");
+  for(let i=0;i<3;i++){
+    const c = document.createElement("div");
+    c.className = "caja-ex";
+    c.innerHTML = '<div class="rol">EXECUTOR '+(i+1)+'</div><div style="font-weight:700;font-size:.9rem;margin-top:3px">Procesa datos</div><div class="bloques"></div>';
+    fila.appendChild(c);
+  }
+  // cableado: tronco + 3 bajantes
+  cable.innerHTML =
+    '<i style="left:50%;top:0;width:2px;height:22px;transform:translateX(-1px)"></i>' +
+    '<i style="left:16.6%;right:16.6%;top:22px;height:2px"></i>' +
+    '<i style="left:16.6%;top:22px;width:2px;height:24px"></i>' +
+    '<i style="left:50%;top:22px;width:2px;height:24px;transform:translateX(-1px)"></i>' +
+    '<i style="left:83.4%;top:22px;width:2px;height:24px;transform:translateX(-1px)"></i>';
+
+  let enviado = false;
+  btn.addEventListener("click", ()=>{
+    const cajas = [...fila.querySelectorAll(".bloques")];
+    if(enviado){
+      cajas.forEach(b => b.innerHTML = "");
+      nota.textContent = "El driver está esperando. Nada se ha repartido todavía.";
+      btn.textContent = "Enviar las tareas";
+      enviado = false;
+      return;
+    }
+    cajas.forEach((b, i)=>{
+      b.innerHTML = "";
+      for(let k=0;k<3;k++){
+        const s = document.createElement("span");
+        s.className = "bloque apagado";
+        b.appendChild(s);
+        setTimeout(()=> s.classList.remove("apagado"), suave ? (i*3+k)*110 : 0);
+      }
+    });
+    nota.textContent = "Tareas repartidas. El driver ya terminó su parte; ahora trabajan los executors.";
+    btn.textContent = "Reiniciar";
+    enviado = true;
+  });
+})();
+
+/* ============ 4. PEREZA ============ */
+(function(){
+  const TRANS = [".filter(...)", ".select(...)", ".withColumn(...)", ".groupBy(...)", ".join(...)", ".orderBy(...)"];
+  const ACC = [".show()", ".count()", ".write.parquet(...)", ".toPandas()"];
+  const pt = $("#paletaTrans"), pa = $("#paletaAcc"), cons = $("#consola"), aviso = $("#avisoPereza");
+  let cadena = [];
+  let ejecutado = false;
+
+  function pintar(){
+    cons.innerHTML = "";
+    const cab = document.createElement("div");
+    cab.className = "linea gris";
+    cab.textContent = "df = spark.read.csv(...)";
+    cons.appendChild(cab);
+    if(cadena.length === 0){
+      const v = document.createElement("div");
+      v.className = "vacio";
+      v.style.marginTop = "8px";
+      v.textContent = "// añade transformaciones a la cadena";
+      cons.appendChild(v);
+    }
+    cadena.forEach(p=>{
+      const l = document.createElement("div");
+      l.className = "linea";
+      l.textContent = "  " + p;
+      cons.appendChild(l);
+    });
+    const cont = document.createElement("div");
+    cont.className = "contadores";
+    cont.innerHTML =
+      '<div><div class="k">Pasos anotados</div><div class="v">'+cadena.length+'</div></div>' +
+      '<div><div class="k">Filas leídas</div><div class="v'+(ejecutado?' vivo':'')+'">'+(ejecutado?"5.000":"0")+'</div></div>' +
+      '<div><div class="k">Estado</div><div class="v" style="font-size:1.05rem;font-family:var(--cuerpo)">'+(ejecutado?"Ejecutado":"En espera")+'</div></div>';
+    cons.appendChild(cont);
+  }
+
+  TRANS.forEach(t=>{
+    const b = document.createElement("button");
+    b.className = "ficha"; b.textContent = t; b.type = "button";
+    b.addEventListener("click", ()=>{
+      cadena.push(t); ejecutado = false;
+      aviso.innerHTML = "<strong>Nada se ha ejecutado.</strong> Llevas "+cadena.length+" paso"+(cadena.length>1?"s":"")+" anotado"+(cadena.length>1?"s":"")+" y el contador de filas leídas sigue en cero. Spark solo apuntó qué hacer.";
+      pintar();
+    });
+    pt.appendChild(b);
+  });
+
+  ACC.forEach(a=>{
+    const b = document.createElement("button");
+    b.className = "ficha es-accion"; b.textContent = a; b.type = "button";
+    b.addEventListener("click", ()=>{
+      if(cadena.length === 0){
+        aviso.innerHTML = "<strong>Añade primero alguna transformación.</strong> Una acción sin plan no tiene nada que ejecutar.";
+        return;
+      }
+      cadena.push(a); ejecutado = true;
+      aviso.innerHTML = "<strong>Aquí sí trabajó.</strong> La acción disparó los "+(cadena.length-1)+" pasos de golpe, ya optimizados. Este es el único momento en que Spark leyó el archivo.";
+      pintar();
+    });
+    pa.appendChild(b);
+  });
+
+  $("#btnLimpiar").addEventListener("click", ()=>{
+    cadena = []; ejecutado = false;
+    aviso.textContent = "Ve añadiendo transformaciones. Vas a ver que el contador de filas leídas no se mueve.";
+    pintar();
+  });
+
+  pintar();
+})();
+
+/* ============ 5. CATALYST ============ */
+(function(){
+  const COLS = ["id","fecha","cliente","producto","categoria","cantidad","precio","region"];
+  const cont = $("#columnas"), disco = $("#disco"), aviso = $("#avisoCatalyst");
+  const pedidas = new Set(["categoria","precio"]);
+
+  function pintar(){
+    disco.innerHTML = "";
+    COLS.forEach(c=>{
+      const tira = document.createElement("div");
+      tira.className = "tira" + (pedidas.has(c) ? " leida" : "");
+      const cab = document.createElement("div");
+      cab.className = "cab"; cab.textContent = c;
+      tira.appendChild(cab);
+      for(let i=0;i<9;i++){
+        const cel = document.createElement("span");
+        cel.className = "celdita";
+        tira.appendChild(cel);
+      }
+      disco.appendChild(tira);
+    });
+    const n = pedidas.size;
+    const ahorro = Math.round((1 - n/COLS.length) * 100);
+    aviso.innerHTML = n === 0
+      ? "No pediste ninguna columna. Sin plan que optimizar, Spark no sabe qué saltarse."
+      : "Spark lee <strong>"+n+" de "+COLS.length+" columnas</strong> y se salta el resto: <strong>"+ahorro+"% menos lectura de disco</strong>. Con pandas, las ocho se cargarían igual.";
+  }
+
+  COLS.forEach(c=>{
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "col-chip" + (pedidas.has(c) ? " pedida" : "");
+    b.textContent = c;
+    b.setAttribute("aria-pressed", pedidas.has(c));
+    b.addEventListener("click", ()=>{
+      if(pedidas.has(c)) pedidas.delete(c); else pedidas.add(c);
+      b.classList.toggle("pedida", pedidas.has(c));
+      b.setAttribute("aria-pressed", pedidas.has(c));
+      pintar();
+    });
+    cont.appendChild(b);
+  });
+  pintar();
+})();
+
+/* ============ 6. SHUFFLE ============ */
+(function(){
+  const arena = $("#arena"), aviso = $("#avisoShuffle");
+  const COLORES = ["#E8622C","#3E7CB1","#3E8E5A"];
+  const N = 18;
+  let puntos = [];
+
+  function muelles(){
+    arena.innerHTML = "";
+    ["executor 1","executor 2","executor 3"].forEach((n,i)=>{
+      const m = document.createElement("div");
+      m.className = "muelle";
+      m.style.left = (6 + i*31.3) + "%";
+      m.style.height = "150px";
+      m.innerHTML = '<div class="rot">'+n+'</div>';
+      arena.appendChild(m);
+    });
+  }
+
+  function sembrar(){
+    muelles();
+    puntos = [];
+    for(let i=0;i<N;i++){
+      const g = i % 3;
+      const ex = Math.floor(i / 6);
+      const p = document.createElement("span");
+      p.className = "punto";
+      p.style.background = COLORES[g];
+      p.dataset.grupo = g;
+      arena.appendChild(p);
+      puntos.push(p);
+      colocar(p, ex, i % 6);
+    }
+  }
+  function colocar(p, ex, k){
+    const col = k % 2, fila = Math.floor(k / 2);
+    p.style.left = (9 + ex*31.3 + col*8) + "%";
+    p.style.top = (105 + fila*22) + "px";
+  }
+
+  $("#btnFiltrar").addEventListener("click", ()=>{
+    let quitados = 0;
+    puntos.forEach(p=>{
+      if(Math.random() < 0.35){ p.style.opacity = "0.12"; quitados++; }
+      else p.style.opacity = "1";
+    });
+    aviso.innerHTML = "<strong>Sin shuffle.</strong> Cada executor descartó sus propias filas sin hablar con nadie ("+quitados+" descartadas). Nada viajó por la red: es barato.";
+  });
+
+  $("#btnAgrupar").addEventListener("click", ()=>{
+    puntos.forEach(p => p.style.opacity = "1");
+    const cuenta = [0,0,0];
+    puntos.forEach(p=>{
+      const g = +p.dataset.grupo;
+      colocar(p, g, cuenta[g]++);
+    });
+    aviso.innerHTML = "<strong>Con shuffle.</strong> Para agrupar, cada dato tuvo que viajar al executor de su grupo. Ese movimiento cruza la red y es la operación más costosa de Spark.";
+  });
+
+  sembrar();
+})();
+
+/* ============ 7. COMPARADOR ============ */
+(function(){
+  const TEMAS = [
+    { t:"Escala", p:["Lo que quepa en la RAM","Un solo computador, una sola memoria. Pasado ese punto, no hay nada que hacer."],
+      s:["Terabytes, repartidos","Suma máquinas y suma capacidad. El límite deja de ser físico y pasa a ser presupuestal."] },
+    { t:"Ejecución", p:["Inmediata, línea por línea","Cada instrucción se ejecuta al escribirla, sin saber qué vendrá después."],
+      s:["Perezosa y optimizada","Anota el plan completo y lo reordena antes de ejecutarlo. Por eso puede saltarse trabajo."] },
+    { t:"Velocidad real", p:["Gana con datos pequeños","Arranca al instante. Para unos miles de filas, es la opción sensata."],
+      s:["Gana con datos grandes","Levantar la máquina virtual de Java tarda segundos. Ese costo fijo solo se amortiza con volumen."] },
+    { t:"Índice", p:["Sí: .loc y .iloc","Puedes pedir la fila 5 porque las filas están juntas y en orden."],
+      s:["No existe","Las filas están repartidas entre máquinas. Pedir 'la fila 5' no significa nada."] },
+    { t:"Mutabilidad", p:["Se modifica en el sitio","inplace=True cambia el DataFrame que ya tenías."],
+      s:["Inmutable","Cada operación devuelve un DataFrame nuevo. Siempre hay que reasignar."] },
+    { t:"Gráficos", p:["Directo","Un .plot() y ya está: se apoya en matplotlib sin intermediarios."],
+      s:["Pasa por pandas","Spark no dibuja. Traes el resultado agregado con .toPandas() y grafica pandas."] },
+    { t:"Para qué sirve", p:["Explorar y prototipar","Análisis exploratorio, notebooks, pruebas rápidas sobre una muestra."],
+      s:["Producir","Pipelines de ETL que corren solos todas las noches sobre el volumen completo."] },
+  ];
+  const cont = $("#temas");
+  let activo = 0;
+
+  function pintar(){
+    const d = TEMAS[activo];
+    $("#frasePandas").textContent = d.p[0];
+    $("#detallePandas").textContent = d.p[1];
+    $("#fraseSpark").textContent = d.s[0];
+    $("#detalleSpark").textContent = d.s[1];
+    [...cont.children].forEach((b,i)=> b.setAttribute("aria-pressed", i===activo));
+  }
+  TEMAS.forEach((d,i)=>{
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "tema"; b.textContent = d.t;
+    b.addEventListener("click", ()=>{ activo = i; pintar(); });
+    cont.appendChild(b);
+  });
+  pintar();
+})();
+
+/* ============ GLOSARIO ============ */
+(function(){
+  const G = [
+    ["SparkSession","La puerta de entrada al motor. Siempre es la primera línea del código."],
+    ["Driver","Tu script de Python: arma el plan y reparte tareas. No procesa datos."],
+    ["Executor","El trabajador que sí procesa. Aquí vive el paralelismo."],
+    ["Partición","Cada pedazo en que se corta el archivo. Una partición es una tarea."],
+    ["DataFrame","Tabla repartida entre máquinas, con nombre y tipo por columna."],
+    ["Transformación","filter, select, groupBy, join. No ejecutan: solo anotan el plan."],
+    ["Acción","show, count, write, toPandas. Disparan la ejecución de todo lo anotado."],
+    ["Catalyst","El optimizador que reordena el plan antes de ejecutarlo."],
+    ["Shuffle","Mover datos entre executors. Lo más costoso que hace Spark."],
+    ["UDF","Función de Python fila por fila. Se evita: obliga a cruzar de Java a Python."],
+    ["Parquet","Formato columnar y comprimido. El estándar del data lake."],
+    ["local[*]","'Usa todos los núcleos de esta máquina'. Simula un clúster en tu portátil."],
+  ];
+  const f = $("#fichero");
+  G.forEach(([k,v])=>{
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "tarjeta";
+    b.setAttribute("aria-expanded","false");
+    b.innerHTML = '<div class="palabra">'+k+'</div><div class="significado">'+v+'</div>';
+    b.addEventListener("click", ()=>{
+      const abierto = b.getAttribute("aria-expanded") === "true";
+      b.setAttribute("aria-expanded", !abierto);
+    });
+    f.appendChild(b);
+  });
+})();
+</script>
+</body>
+</html>
